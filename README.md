@@ -1,6 +1,6 @@
 # 🫀 Heart Disease Prediction using Logistic Regression
 
-A machine learning project that predicts cardiovascular disease (CVD) risk using clinical patient data. The project covers end-to-end data analysis — from exploratory data analysis (EDA) to model training, evaluation, and hyperparameter tuning.
+A machine learning project that predicts cardiovascular disease (CVD) risk using clinical patient data. Recently refactored from a Jupyter Notebook into a **production-ready software architecture**, this project covers end-to-end data analysis, automated visualizations, hyperparameter tuning, and persistent model saving.
 
 ---
 
@@ -8,18 +8,19 @@ A machine learning project that predicts cardiovascular disease (CVD) risk using
 
 - [Project Overview](#project-overview)
 - [Dataset](#dataset)
-- [Project Workflow](#project-workflow)
-- [Key Findings from EDA](#key-findings-from-eda)
+- [Project Architecture & Workflow](#project-architecture--workflow)
+- [Key Findings & Feature Importance](#key-findings--feature-importance)
 - [Model Performance](#model-performance)
 - [Technologies Used](#technologies-used)
 - [How to Run](#how-to-run)
 - [Results Summary](#results-summary)
+- [Future Improvements](#future-improvements)
 
 ---
 
 ## Project Overview
 
-This project uses **Logistic Regression** to classify whether a patient is at risk of heart disease based on 13 clinical features. The model is iteratively improved using **feature scaling** (StandardScaler) and **hyperparameter tuning** (GridSearchCV), boosting accuracy from **82% to 84%**.
+This project uses **Logistic Regression** to classify whether a patient is at risk of heart disease based on 13 clinical features. The model is built inside a fully modular Python pipeline controlled by a `config.yaml` file. It iteratively improves using **feature scaling** (StandardScaler) and **hyperparameter tuning** (GridSearchCV), achieving an accuracy of **85%**.
 
 ---
 
@@ -48,113 +49,82 @@ The target variable is **well-balanced** — approximately 54% diseased and 46% 
 
 ---
 
-## Project Workflow
+## Project Architecture & Workflow
 
-```
-1. Data Loading & Inspection
-        ↓
-2. Data Cleaning (duplicates, missing values)
-        ↓
-3. Exploratory Data Analysis (EDA)
-        ↓
-4. Feature & Target Separation
-        ↓
-5. Train/Test Split (80/20)
-        ↓
-6. Baseline Logistic Regression Model
-        ↓
-7. Feature Scaling (StandardScaler)
-        ↓
-8. Hyperparameter Tuning (GridSearchCV)
-        ↓
-9. Evaluation (Classification Report + Confusion Matrix)
-```
+The code has been upgraded from a linear notebook into a professional repository structure:
+
+1. `config/config.yaml` (Master setup for hyperparameters and paths)
+2. `src/data_loader.py` (Data ingestion and cleaning)
+3. `src/visualizer.py` (Automated EDA generation -> outputs/)
+4. `src/model.py` (GridSearchCV, scaling, training & joblib saving -> models/)
+5. `src/evaluate.py` (Classification reports, ROC, feature weights -> outputs/)
 
 ---
 
-## Key Findings from EDA
+## Key Findings & Feature Importance
 
-**Strongest predictors of heart disease:**
+By extracting the mathematical weights (coefficients) from the tuned Logistic Regression model, the pipeline identified the **Top 5 strongest predictors** of heart disease:
 
-- **Chest Pain Type (`cp`)** — Non-anginal chest pain is strongly associated with higher CVD risk.
-- **Max Heart Rate (`thalach`)** — Higher peak heart rate during exercise correlates with higher risk.
-- **Thalassemia Type (`thal`)** — Type 2 is heavily associated with CVD (129 diseased vs. 36 healthy); Type 3 patients are mostly healthy.
-- **Number of Major Vessels (`ca`)** — More clear vessels = lower risk.
-- **Exercise-Induced Angina (`exang`)** — Patients *without* exercise-induced angina are paradoxically more often in the at-risk group.
+1. **Number of Major Vessels (`ca`)**: More clear vessels strongly indicate a *lower* risk.
+2. **Sex (`sex`)**: Gender plays a significant mathematical role in the model's risk calculation.
+3. **Chest Pain Type (`cp`)**: Non-anginal chest pain is strongly associated with higher CVD risk.
+4. **Thalassemia (`thal`)**: Type 2 is heavily associated with disease; Type 3 patients are mostly healthy.
+5. **ST Depression (`oldpeak`)**: A critical ECG finding indicating cardiovascular stress.
 
 **Surprising non-predictors:**
-
-- **Cholesterol (`chol`)** and **Fasting Blood Sugar (`fbs`)** showed near-zero correlation with the target in this dataset — contrary to common assumptions.
-- **Resting Blood Pressure (`trestbps`)** — Median values were almost identical across both groups (~130 mm Hg).
-
-**Demographics:**
-
-- Dataset is skewed towards males (68.2% male, 31.8% female).
-- Heart disease risk peaks for patients in their **early-to-mid 50s**; past age 60, the trend reverses in this dataset.
+**Cholesterol (`chol`)** and **Fasting Blood Sugar (`fbs`)** showed near-zero mathematical correlation with the target in this specific dataset — contrary to common assumptions.
 
 ---
 
 ## Model Performance
 
-### Baseline Logistic Regression
-
-| Metric | Score |
-|---|---|
-| Overall Accuracy | **82%** |
-| True Negatives (Healthy → Healthy) | 24 |
-| True Positives (Diseased → Diseased) | 26 |
-| False Positives (Healthy → Diseased) | 5 |
-| False Negatives (Diseased → Healthy) | 6 |
+The model was evaluated on a 20% holdout test set (61 patients). 
 
 ### Tuned Logistic Regression (StandardScaler + GridSearchCV)
 
 | Metric | Score |
 |---|---|
-| Overall Accuracy | **84%** |
-| False Positives | Reduced from 5 → 4 |
+| Overall Accuracy | **85%** |
+| Precision (Diseased) | 87% |
+| Recall (Diseased) | 84% |
+| True Negatives (Healthy → Healthy) | 25 |
+| True Positives (Diseased → Diseased) | 27 |
+| False Positives (Healthy → Diseased) | 4 |
+| False Negatives (Diseased → Healthy) | 5 |
 
-The tuned model reduced false positives (healthy patients misclassified as diseased), which is important for reducing unnecessary medical interventions.
+The tuned model successfully reduced false positives. 
 
-> ⚠️ **Note:** In a medical context, **False Negatives** (diseased patients predicted as healthy) are the most critical error. Minimising them should be the priority in any production deployment.
+> ⚠️ **Note:** In a medical context, **False Negatives** (diseased patients predicted as healthy) are the most critical error. The model correctly caught 27 out of 32 diseased patients in the test set.
 
 ---
 
 ## Technologies Used
 
 - **Python 3**
-- **Pandas** — Data manipulation
-- **Matplotlib & Seaborn** — Data visualisation
-- **Scikit-learn** — Model building, scaling, and tuning
-  - `LogisticRegression`
-  - `StandardScaler`
-  - `GridSearchCV`
-  - `train_test_split`
-  - `confusion_matrix`, `classification_report`
-- **Google Colab** — Development environment
+- **Pandas & OpenPyXL** — Data manipulation and ingestion
+- **Matplotlib & Seaborn** — Automated data visualization
+- **Scikit-learn** — Model building, scaling, pipelines, and tuning
+- **PyYAML** — Configuration management
+- **Joblib** — Model serialization and saving
+- **Custom Logger** — Enterprise-grade terminal and file logging
 
 ---
 
 ## How to Run
 
 1. **Clone the repository**
-   ```bash
    git clone https://github.com/Saiprasadjindam1428/heart-disease-prediction.git
    cd heart-disease-prediction
-   ```
 
 2. **Install dependencies**
-   ```bash
-   pip install pandas matplotlib seaborn scikit-learn openpyxl
-   ```
+   pip install -r requirements.txt
 
 3. **Add the dataset**
-   Place your `data.xlsx` file in the project directory and update the file path in the notebook:
-   ```python
-   df = pd.read_excel('data.xlsx')
-   ```
+   Place your `data.xlsx` file inside the `data/` folder. *(Note: The data folder is ignored by git for privacy and size constraints).*
 
-4. **Run the notebook**
-   Open `Heart_disease.ipynb` in Jupyter Notebook or Google Colab and run all cells.
+4. **Run the pipeline**
+   python main.py
+   *(The script will automatically generate your logs, charts in the `outputs/` folder, and save the final model in the `models/` folder.)*
 
 ---
 
@@ -162,18 +132,15 @@ The tuned model reduced false positives (healthy patients misclassified as disea
 
 | Step | Accuracy |
 |---|---|
-| Baseline Logistic Regression | 82% |
-| After Feature Scaling + GridSearchCV Tuning | **84%** |
+| Baseline Logistic Regression (Notebook) | 82% |
+| Modular Pipeline with GridSearchCV Tuning | **85%** |
 
-The improvement highlights the importance of feature scaling for distance/gradient-based algorithms like Logistic Regression, and how systematic hyperparameter search can yield measurable gains even on a small dataset.
+The transition to a formal pipeline allows for rapid parameter testing, yielding measurable gains in accuracy and creating a deployable `.joblib` asset.
 
 ---
 
 ## 📌 Future Improvements
 
-- Test additional classifiers (Random Forest, XGBoost, SVM)
-- Address class imbalance more explicitly (SMOTE or class weighting)
-- Build a simple prediction interface using Streamlit
-- Prioritise recall for the "Diseased" class to reduce dangerous False Negatives
-
----
+- Test additional classifiers (Random Forest, XGBoost) directly within `model.py`.
+- Build a prediction interface using Streamlit that loads the saved `best_logistic_model.joblib` file.
+- Adjust prediction thresholds to prioritize recall for the "Diseased" class, reducing dangerous False Negatives further.
