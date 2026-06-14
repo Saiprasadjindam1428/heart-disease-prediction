@@ -1,0 +1,10 @@
+# config/config.yaml
+project_name: "Heart Disease Prediction Pipeline"
+paths:
+  data: "data/data.xlsx"
+  models: "models/"
+  outputs: "outputs/"
+model_params:
+  target_column: "target"
+  test_size: 0.2
+  random_state: 42

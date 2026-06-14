@@ -1,0 +1,14 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+venv/
+env/
+
+# Outputs and Models (We don't usually upload massive models/data to Git)
+outputs/
+models/
+data/
