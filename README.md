@@ -8,7 +8,7 @@ A machine learning project that predicts cardiovascular disease (CVD) risk using
 
 - [Project Overview](#Project-Overview)
 - [Dataset](#Dataset)
-- [Project Architecture & Workflow](#Project-Architecture-&-Workflow)
+- [Project Architecture & Workflow](#Project-Architecture-and-Workflow)
 - [Key Findings & Feature Importance](#key-findings--feature-importance)
 - [Model Performance](#model-performance)
 - [Technologies Used](#technologies-used)
@@ -49,7 +49,7 @@ The target variable is **well-balanced** — approximately 54% diseased and 46% 
 
 ---
 
-## Project Architecture & Workflow
+## Project Architecture and Workflow
 
 The code has been upgraded from a linear notebook into a professional repository structure:
 
