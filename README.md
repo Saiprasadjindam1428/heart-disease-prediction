@@ -6,9 +6,9 @@ A machine learning project that predicts cardiovascular disease (CVD) risk using
 
 ## 📋 Table of Contents
 
-- [Project Overview](#Project Overview)
+- [Project Overview](#Project-Overview)
 - [Dataset](#Dataset)
-- [Project Architecture & Workflow](#project-architecture--workflow)
+- [Project Architecture & Workflow](#Project-Architecture-&-Workflow)
 - [Key Findings & Feature Importance](#key-findings--feature-importance)
 - [Model Performance](#model-performance)
 - [Technologies Used](#technologies-used)
